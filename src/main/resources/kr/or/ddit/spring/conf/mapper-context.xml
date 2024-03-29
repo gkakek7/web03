@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- dataSource를 주입받아서 sqlSesseionFactory 생성 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:dataSource-ref="dataSource"
+		p:configLocation="classpath:kr/or/ddit/mybatis/Configuration.xml"
+		p:mapperLocations="classpath:kr/or/ddit/mybatis/mappers/*.xml"
+	/>
+	
+	<!--  생성 열고닫고 반복 안하려고 만든 것 -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" 
+		c:sqlSessionFactory-ref="sqlSessionFactory"
+	/>
+	
+	<!-- case3 2) dao package를 scan하라는 뜻 (mapper라는 annotation 을 만나면 proxy로 어쩌꾸저쩌구)-->
+	<!-- template-ref="sqlSession" > mapper proxy 생성 후 자동등록 -->
+	<!-- base package 내의 모든 @Mapper 인터페이스들을 대상으로 mapper proxy 를 생성하고 빈으로 등록하기 위한 스캐너 설정 -->
+	<mybatis-spring:scan base-package="kr.or.ddit.**.dao" 
+		annotation="org.apache.ibatis.annotations.Mapper"
+		factory-ref="sqlSessionFactory"
+		template-ref="sqlSession"
+	/> 
+
+</beans>
+
+
+<!-- 
+	<mapper resource="kr/or/ddit/mybatis/mappers/Property.xml"/>
+-->

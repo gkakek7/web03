@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+		
+	<!--  mybais가 없어도 할 수 있는 설정파일 / mybatis와 연결할 수 있는 전략객체 필요 (mapper-context) -->
+	
+	<!-- DB연결정보 -->
+	<util:properties id="dbInfo" location="classpath:kr/or/ddit/db/dbInfo.properties" />
+	
+	<!-- 로딩되어있는 연결정보를 spring EL을 통해 데이터 소스에 주입 / DB연결정보를 통해 JDBC connection 생성 및 ConnectionPooling -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+		p:driverClassName="#{dbInfo.driverClassName}"
+		p:url="#{dbInfo.url}"
+		p:username="#{dbInfo.user}"
+		p:password="#{dbInfo.password}"
+		p:initialSize="#{dbInfo.initialSize}"
+		p:maxIdle="#{dbInfo.maxIdle}"
+		p:maxTotal="#{dbInfo.maxTotal}"
+		p:maxWaitMillis="#{dbInfo.maxWait}" />
+	
+	<!-- 플랫폼 기반의 트랜잭션 관리자 / 전체적인 컨테이너 단에서 트랜잭션 관리-->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" 
+		p:dataSource-ref="dataSource" />
+</beans>
+	
+	
+	
+	
+	
+	
+<!--
+	<properties resource="kr/or/ddit/db/dbInfo.properties" /> 
+		<dataSource type="POOLED">
+				<property name="driver" value="${driverClassName}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${user}" />
+				<property name="password" value="${password}" />
+				<property name="poolMaximumActiveConnections" value="${maxTotal}" />
+				<property name="poolMaximumIdleConnections" value="${maxIdle}" />
+				<property name="poolTimeToWait" value="${maxWailt}" />
+		</dataSource>
+	<transactionManager type="JDBC"></transactionManager>
+-->
